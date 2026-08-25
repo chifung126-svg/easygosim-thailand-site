@@ -35,10 +35,26 @@ const japanPlans = [
   { group:'5G', name:'5G 無限 26日', days:'26日', id:'48748094980251' }
 ];
 
+const destinationPlans = {
+  korea: [
+    ...[1,2].flatMap(gb => [1,3,5,7,10,15,20,30].map(days => ({ group:`${gb}GB / 日`, name:`${gb}GB 每日 · ${days}日`, days, id:`eSIM-KR${gb}G-${String(days).padStart(2,'0')}` }))),
+    ...[1,2,3,4,5,6,7,8,9,10,15,20,30,60,90].map(days => ({ group:'SKT unlimited', name:`SKT unlimited · ${days}日`, days, id:`eSIM-SKTUL-${String(days).padStart(2,'0')}`, best:days===5 }))
+  ],
+  'hong-kong': [1,2,3].flatMap(gb => [1,2,3,4,5,6,7,8,9,10,15,20,30].map(days => ({ group:`每日 ${gb}GB`, name:`${gb}GB 每日 · ${days}日`, days, id:`eSIM-CHMA${gb}G-${String(days).padStart(2,'0')}` }))),
+  china: [
+    ...[1,2,3].flatMap(gb => [1,2,3,4,5,6,7,8,9,10,15,20,30].map(days => ({ group:`每日 ${gb}GB`, name:`${gb}GB 每日 · ${days}日`, days, id:`eSIM-CNA${gb}G-${String(days).padStart(2,'0')}` }))),
+    ...[1,2,3,4,5,6,7,8,9,10,15,20,30].flatMap(days => [
+      { group:'MAX 10Mbps', name:`MAX 10Mbps · ${days}日`, days, id:`eSIM-CNA10M-${String(days).padStart(2,'0')}` },
+      { group:'MAX 5Mbps', name:`MAX 5Mbps · ${days}日`, days, id:`eSIM-CNAMAX-${String(days).padStart(2,'0')}` }
+    ])
+  ],
+  taiwan: [1,2,3].flatMap(gb => [1,3,5,7,10,15,20,30].map(days => ({ group:`每日 ${gb}GB`, name:`${gb}GB 每日 · ${days}日`, days, id:`eSIM-TWR${gb}G-${String(days).padStart(2,'0')}` })))
+};
+
 function planMarkup(d, en) {
-  if (d.slug !== 'japan') return '<div class="plans"><button class="plan selected" type="button"><strong>Short trip</strong><small>View live plans in Checkout</small></button></div>';
-  const groups = [...new Set(japanPlans.map(p=>p.group))];
-  return `<div class="live-plan-groups" data-plan-grid>${groups.map(group=>`<section class="plan-group"><h4>${en?`${group} unlimited data`:`${group} 無限數據`}</h4><div class="plans">${japanPlans.filter(p=>p.group===group).map(p=>`<a class="plan live-plan${p.best?' best selected':''}" data-esim-sku="${p.id}" href="${checkout}?variant=${p.id}"><strong>${en?p.name.replace('日',' days') : p.name}</strong><small>${en?'View THB price in Checkout':'在 Checkout 查看 THB 價格'}</small></a>`).join('')}</div></section>`).join('')}</div>`;
+  const plans = d.slug === 'japan' ? japanPlans : destinationPlans[d.slug];
+  const groups = [...new Set(plans.map(p=>p.group))];
+  return `<div class="live-plan-groups" data-plan-grid>${groups.map(group=>`<section class="plan-group"><h4>${en?`${group} plans`:`${group} 方案`}</h4><div class="plans">${plans.filter(p=>p.group===group).map(p=>`<a class="plan live-plan${p.best?' best selected':''}" data-esim-sku="${p.id}" href="${checkout}?variant=${p.id}"><strong>${en?p.name.replace(/日/g,' days') : p.name}</strong><small>${en?'View THB price in Checkout':'在 Checkout 查看 THB 價格'}</small></a>`).join('')}</div></section>`).join('')}</div>`;
 }
 
 function thaiPage(d) {
