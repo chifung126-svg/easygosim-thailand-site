@@ -92,11 +92,12 @@ function planMarkup(d, en) {
   const groups = [...new Set(plans.map(p=>p.group))];
   const gbLabel = value => value.match(/\d+GB/)?.[0] || '';
   const localizedName = p => {
+    const days = Number.parseInt(p.days, 10);
     const gb = gbLabel(p.group);
-    if (gb) return en ? `${gb}/day · ${p.days} days` : `${gb}/วัน · ${p.days} วัน`;
-    if (p.group === 'SKT unlimited') return en ? `SKT unlimited · ${p.days} days` : `SKT ไม่จำกัด · ${p.days} วัน`;
-    if (p.group === '4G' || p.group === '5G') return en ? `${p.group} unlimited · ${p.days} days` : `${p.group} ไม่จำกัด · ${p.days} วัน`;
-    return `${p.group} · ${en ? `${p.days} days` : `${p.days} วัน`}`;
+    if (gb) return en ? `${gb}/day · ${days} days` : `${gb}/วัน · ${days} วัน`;
+    if (p.group === 'SKT unlimited') return en ? `SKT unlimited · ${days} days` : `SKT ไม่จำกัด · ${days} วัน`;
+    if (p.group === '4G' || p.group === '5G') return en ? `${p.group} unlimited · ${days} days` : `${p.group} ไม่จำกัด · ${days} วัน`;
+    return `${p.group} · ${en ? `${days} days` : `${days} วัน`}`;
   };
   const localizedGroup = group => {
     const gb = gbLabel(group);
