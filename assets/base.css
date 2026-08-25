@@ -3,3 +3,5 @@
 .hero-grid{align-items:start}
 .hero-photo{min-height:540px;height:540px}
 @media(max-width:820px){.hero-photo{height:300px}}
+/* Compact mobile imagery across destination pages. */
+@media(max-width:820px){.hero-photo{height:220px;min-height:220px;padding:17px}.hero-photo h1{font-size:30px}.hero-photo p{font-size:13px}}
