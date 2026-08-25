@@ -84,6 +84,11 @@ function metadata(html, file) {
   if (descriptionOverrides[overrideKey]) description = descriptionOverrides[overrideKey][english ? 1 : 0];
   if (base === '' && english) description = 'EasyGoSIM helps Thai travellers prepare travel eSIMs for Japan, Korea, Hong Kong, China and Taiwan. Choose a plan, pay by card and receive your QR code by email.';
   if (base === '' && !english) description = 'EasyGoSIM ช่วยคนไทยเตรียม travel eSIM สำหรับญี่ปุ่น เกาหลี ฮ่องกง จีน และไต้หวัน เลือกแพ็กเกจ ชำระด้วยบัตร และรับ QR Code ทางอีเมล';
+  if (title.length < 30) {
+    title = `${title.replace(/\s*\|\s*EasyGoSIM$/i, '')} | ${english ? 'Thailand travel eSIM' : 'travel eSIM สำหรับคนไทย'} | EasyGoSIM`;
+  }
+  if (description.length < 70) description = `${description} ${english ? 'Built for Thai travellers.' : 'สำหรับนักท่องเที่ยวไทย'}`;
+  if (description.length > 160) description = `${description.slice(0, 157).trimEnd()}...`;
 
   html = html.replace(/<title[^>]*>.*?<\/title>/is, `<title>${title}</title>`);
   html = html.replace(/<meta[^>]+name=["']description["'][^>]*>/i, `<meta name="description" content="${description}">`);
