@@ -54,7 +54,22 @@ const destinationPlans = {
 function planMarkup(d, en) {
   const plans = d.slug === 'japan' ? japanPlans : destinationPlans[d.slug];
   const groups = [...new Set(plans.map(p=>p.group))];
-  return `<div class="live-plan-groups" data-plan-grid>${groups.map(group=>`<section class="plan-group"><h4>${en?`${group} plans`:`${group} 方案`}</h4><div class="plans">${plans.filter(p=>p.group===group).map(p=>`<a class="plan live-plan${p.best?' best selected':''}" data-esim-sku="${p.id}" href="${checkout}?variant=${p.id}"><strong>${en?p.name.replace(/日/g,' days') : p.name}</strong><small>${en?'View THB price in Checkout':'在 Checkout 查看 THB 價格'}</small></a>`).join('')}</div></section>`).join('')}</div>`;
+  const gbLabel = value => value.match(/\d+GB/)?.[0] || '';
+  const localizedName = p => {
+    const gb = gbLabel(p.group);
+    if (gb) return en ? `${gb}/day · ${p.days} days` : `${gb}/วัน · ${p.days} วัน`;
+    if (p.group === 'SKT unlimited') return en ? `SKT unlimited · ${p.days} days` : `SKT ไม่จำกัด · ${p.days} วัน`;
+    if (p.group === '4G' || p.group === '5G') return en ? `${p.group} unlimited · ${p.days} days` : `${p.group} ไม่จำกัด · ${p.days} วัน`;
+    return `${p.group} · ${en ? `${p.days} days` : `${p.days} วัน`}`;
+  };
+  const localizedGroup = group => {
+    const gb = gbLabel(group);
+    if (gb) return en ? `${gb}/day plans` : `แพ็กเกจ ${gb}/วัน`;
+    if (group === 'SKT unlimited') return en ? 'SKT unlimited data' : 'อินเทอร์เน็ต SKT ไม่จำกัด';
+    if (group === '4G' || group === '5G') return en ? `${group} unlimited data` : `${group} อินเทอร์เน็ตไม่จำกัด`;
+    return group;
+  };
+  return `<div class="live-plan-groups" data-plan-grid>${groups.map(group=>`<section class="plan-group"><h4>${localizedGroup(group)}</h4><div class="plans">${plans.filter(p=>p.group===group).map(p=>`<a class="plan live-plan${p.best?' best selected':''}" data-esim-sku="${p.id}" href="${checkout}?variant=${p.id}"><strong>${localizedName(p)}</strong><small>${en?'View THB price in Checkout':'ดูราคาเป็น THB ใน Checkout'}</small></a>`).join('')}</div></section>`).join('')}</div>`;
 }
 
 function thaiPage(d) {
