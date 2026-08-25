@@ -12,3 +12,4 @@
 .proof-strip{border-top:1px solid #e2e2e2;border-bottom:1px solid #e2e2e2}
 .mobile-purchase-bar{border-top:1px solid #e2e2e2}
 .member-entry{min-height:44px;display:flex;align-items:center;padding:8px 12px;border:1px solid #e2e2e2;border-radius:999px;background:#fff}
+.live-plan-groups{display:grid;gap:14px}.plan-group h4{margin:0 0 7px;font-size:13px;color:var(--muted)}.plan-group .plans{grid-template-columns:repeat(3,1fr)}.live-plan{display:block;color:inherit}.live-plan small{min-height:32px}.live-plan.best:before{content:'人氣';}.live-plan.selected strong{color:#087a44}@media(max-width:520px){.plan-group .plans{grid-template-columns:repeat(2,1fr)}.live-plan{min-height:78px}}
