@@ -1,0 +1,6 @@
+{
+  "name": "easygosim-thailand-site",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {"start": "node server.mjs", "test": "node scripts/check-site.mjs"}
+}

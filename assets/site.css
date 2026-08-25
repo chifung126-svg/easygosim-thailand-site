@@ -1,0 +1,14 @@
+@import url('/assets/base.css');
+
+/* EasyGoSIM Country eSIM UI Guide: exact brand palette and hierarchy. */
+.promo{background:#fff200;color:#171717;font-weight:800}
+.header{background:rgba(255,255,255,.94);border-bottom:1px solid #e2e2e2}
+.hero{background:#e8f6ff}
+.product-panel,.info-card,.evidence-card,.step{border-color:#e2e2e2}
+.buy{background:#46e58b;color:#171717}
+.buy:hover{background:#13ad61}
+.final-cta{background:#e41e63}
+.pill.yellow,.plan.best:before{background:#fffbea;border-color:#fff200}
+.proof-strip{border-top:1px solid #e2e2e2;border-bottom:1px solid #e2e2e2}
+.mobile-purchase-bar{border-top:1px solid #e2e2e2}
+.member-entry{min-height:44px;display:flex;align-items:center;padding:8px 12px;border:1px solid #e2e2e2;border-radius:999px;background:#fff}
