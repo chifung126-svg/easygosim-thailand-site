@@ -51,6 +51,42 @@ const destinationPlans = {
   taiwan: [1,2,3].flatMap(gb => [1,3,5,7,10,15,20,30].map(days => ({ group:`每日 ${gb}GB`, name:`${gb}GB 每日 · ${days}日`, days, id:`eSIM-TWR${gb}G-${String(days).padStart(2,'0')}` })))
 };
 
+const pricing = {
+  rmbToHkd: 1.1,
+  marginMarkup: 1.55,
+  fixedHkd: 5,
+  hkdToThb: 4.1761,
+  japan: {
+    '48748094423195':22,'48748094455963':32,'48748094488731':37,'48748094521499':45,'48748094554267':52,'48748094587035':56,'48748094619803':65,'48748094652571':69,
+    '48748094685339':35,'48748094718107':45,'48748094750875':54,'48748094783643':65,'48748094816411':74,'48748094849179':80,'48748094881947':94,'48748094914715':97,'48748094947483':142,'48748094980251':247
+  },
+  schedules: {
+    'eSIM-KR1G':[4,7,10,13,18,27,35,52], 'eSIM-KR2G':[5,11,17,23,32,48,63,94], 'eSIM-SKTUL':[19,34,51,65,78,91,99,103,106,109,156,172,203,303,405],
+    'eSIM-CHMA1G':[3,5,7,9,11,13,15,16,18,20,29,39,57], 'eSIM-CHMA2G':[5,8,12,15,19,22,25,29,32,36,53,70,104], 'eSIM-CHMA3G':[6,11,15,20,25,29,34,39,43,48,71,95,141],
+    'eSIM-CNA1G':[4,6,8,10,12,14,16,18,20,23,33,44,65], 'eSIM-CNA2G':[5,9,13,17,21,25,28,32,36,40,59,79,117], 'eSIM-CNA3G':[7,12,17,23,28,33,38,44,49,54,80,107,159],
+    'eSIM-CNA10M':[12,23,33,44,54,65,75,86,96,107,159,212,317], 'eSIM-CNAMAX':[10,19,28,37,45,54,63,72,80,89,133,177,264],
+    'eSIM-TWR1G':[4,7,11,15,21,31,41,61], 'eSIM-TWR2G':[5,12,20,27,38,56,74,110], 'eSIM-TWR3G':[6,16,26,36,51,76,101,150]
+  }
+};
+const scheduleDays = {
+  dailyShort:[1,3,5,7,10,15,20,30], dailyLong:[1,2,3,4,5,6,7,8,9,10,15,20,30], skt:[1,2,3,4,5,6,7,8,9,10,15,20,30,60,90], japan4g:[3,4,5,6,7,8,9,10], japan5g:[3,4,5,6,7,8,9,10,15,26]
+};
+function costRmbFor(d,p) {
+  if (d.slug === 'japan') return pricing.japan[p.id];
+  const key = p.id.replace(/-\d+$/,'');
+  const values = pricing.schedules[key];
+  if (!values) return null;
+  const days = d.slug === 'korea' && key === 'eSIM-SKTUL' ? scheduleDays.skt : d.slug === 'korea' ? scheduleDays.dailyShort : d.slug === 'taiwan' ? scheduleDays.dailyShort : scheduleDays.dailyLong;
+  const index = days.indexOf(Number(p.days));
+  return index < 0 ? null : values[index];
+}
+function thbPriceFor(d,p) {
+  const cost = costRmbFor(d,p);
+  if (cost == null) return null;
+  const hkd = cost * pricing.rmbToHkd * pricing.marginMarkup + pricing.fixedHkd;
+  return Math.max(1, Math.round((hkd * pricing.hkdToThb) / 10) * 10 - 1);
+}
+
 function planMarkup(d, en) {
   const plans = d.slug === 'japan' ? japanPlans : destinationPlans[d.slug];
   const groups = [...new Set(plans.map(p=>p.group))];
@@ -69,7 +105,7 @@ function planMarkup(d, en) {
     if (group === '4G' || group === '5G') return en ? `${group} unlimited data` : `${group} อินเทอร์เน็ตไม่จำกัด`;
     return group;
   };
-  return `<div class="live-plan-groups" data-plan-grid>${groups.map(group=>`<section class="plan-group"><h4>${localizedGroup(group)}</h4><div class="plans">${plans.filter(p=>p.group===group).map(p=>`<a class="plan live-plan${p.best?' best selected':''}" data-esim-sku="${p.id}" href="${checkout}?variant=${p.id}"><strong>${localizedName(p)}</strong><small>${en?'View THB price in Checkout':'ดูราคาเป็น THB ใน Checkout'}</small></a>`).join('')}</div></section>`).join('')}</div>`;
+  return `<div class="live-plan-groups" data-plan-grid>${groups.map(group=>`<section class="plan-group"><h4>${localizedGroup(group)}</h4><div class="plans">${plans.filter(p=>p.group===group).map(p=>{const price=thbPriceFor(d,p);return `<a class="plan live-plan${p.best?' best selected':''}" data-esim-sku="${p.id}" href="${checkout}?variant=${p.id}"><strong>${localizedName(p)}</strong><small>${price==null?(en?'View THB price in Checkout':'ดูราคาเป็น THB ใน Checkout'):(en?`Recommended ฿${price}`:`ราคาแนะนำ ฿${price}`)}</small></a>`}).join('')}</div></section>`).join('')}</div>`;
 }
 
 function thaiPage(d) {
